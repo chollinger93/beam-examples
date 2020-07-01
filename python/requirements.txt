@@ -1,0 +1,2 @@
+setuptools
+apache-beam==2.22.0
