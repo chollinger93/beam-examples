@@ -2,6 +2,9 @@ data/*
 *beam-temp*
 *test-0*
 *movies*.txt*
+go/*txt
+go/movie_pipeline_cogroup.go
+go/movie_pipeline
 *.vscode
 
 # Byte-compiled / optimized / DLL files
