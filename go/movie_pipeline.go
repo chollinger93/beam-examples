@@ -15,6 +15,12 @@ import (
 	"github.com/apache/beam/sdks/go/pkg/beam/x/beamx"
 )
 
+/*
+An example pipeline that takes movies from IMDb and filters them on custom criteria
+
+This pipeline requires data from IMDb: https://www.imdb.com/interfaces/
+*/
+
 // This is the base file
 type movieFn struct {
 	tconst, titleType, primaryTitle, originalTitle string
@@ -23,14 +29,23 @@ type movieFn struct {
 	genres                                         string
 }
 
+// Map \N Strings
+func (f *movieFn) cleanNulls(row []string) []string {
+	for i, _ := range row {
+		if row[i] == "\\N" {
+			row[i] = ""
+		}
+	}
+	return row
+}
+
 // movieFn is a DoFn and needs ProcessElement
 func (f *movieFn) ProcessElement(line string, emit func(movieFn)) {
 	row := strings.Split(line, "\t")
-	fmt.Printf("%v\n", row)
 	// Skip the header
 	if row[0] != "tconst" {
 		// Map nulls
-		// ..
+		row = f.cleanNulls(row)
 		// Convert the types
 		startYear, err1 := strconv.ParseInt(row[5], 10, 64)
 		endYear, _ := strconv.ParseInt(row[6], 10, 64)
@@ -56,7 +71,7 @@ func (f *movieFn) ProcessElement(line string, emit func(movieFn)) {
 				runtimeMinutes: runtimeMinutes,
 				genres:         row[8],
 			}
-			fmt.Printf("%v\n", m)
+			//fmt.Printf("%v\n", m)
 			emit(m)
 		}
 	}
@@ -114,6 +129,7 @@ type targetMovie struct {
 	NumVotes      int64
 }
 
+// Inefficiently combines with SideInputs, rather than a `CoGroupByKey`
 func combineMoviesRatings(movie movieFn, ratings []ratingFn, emit func(targetMovie)) {
 	for _, r := range ratings {
 		if r.tconst == movie.tconst {
@@ -176,6 +192,7 @@ func main() {
 		j, _ := json.Marshal(v)
 		return fmt.Sprintf(string(j))
 	}, combined)
+
 	// Write
 	textio.Write(s, *output, combinedString)
 
