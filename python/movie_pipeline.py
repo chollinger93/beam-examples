@@ -54,7 +54,7 @@ class CleanData(beam.DoFn):
             if record[col]:
                 try:
                     record[col] = func(record[col])
-                except TypeError:
+                except ValueError:
                     record[col] = None
             else:
                 record[col] = None
@@ -89,7 +89,7 @@ class FilterRatingData(beam.DoFn):
 class FilterBasicData(beam.DoFn):
     """Filters base data that is not a movie, an adult movie, or from before 1970"""
     def process(self, record: dict):
-        print(record)
+        #print(record)
         if record['titleType'] == 'movie' and not record['isAdult'] and record['startYear'] and record['startYear'] >= 1970:
             yield record
         # No else - no yield
@@ -114,7 +114,7 @@ def run(argv=None):
     parser.add_argument('--input-basics',
                         dest='input_basics',
                         required=True,
-                        help='Input rating file to process.')
+                        help='Input movie base file to process.')
     parser.add_argument('--input-ratings',
                         dest='input_ratings',
                         required=True,
@@ -161,11 +161,11 @@ def run(argv=None):
             | beam.CoGroupByKey()
             | beam.FlatMap(join_ratings)
             | 'mergedicts' >> beam.Map(lambda dd: {**dd[0], **dd[1]})
-            | 'Print' >> beam.Map(print)
+            #| 'Print' >> beam.Map(print)
         )
 
         # Write to disk
-        joined_dicts | 'write' >> beam.io.WriteToText('./movies.txt')
+        joined_dicts | 'write' >> beam.io.WriteToText(known_args.output)
 
         result = p.run()
         result.wait_until_finish()
