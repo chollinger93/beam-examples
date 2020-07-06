@@ -3,9 +3,12 @@ data/*
 *test-0*
 *movies*.txt*
 go/*txt
-go/movie_pipeline_cogroup.go
 go/movie_pipeline
 *.vscode
+*-0*-of-*
+notebooks/*
+profiler/*
+sbin/profile*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

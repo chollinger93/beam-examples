@@ -11,6 +11,8 @@ import itertools
 """An example pipeline that takes movies from IMDb and filters them on custom criteria
 
 This pipeline requires data from IMDb: https://www.imdb.com/interfaces/
+
+This job/file uses `CoGroupByKey` as `join` 
 """
 
 class ParseCsv(beam.DoFn):
