@@ -6,7 +6,7 @@ Based on my blog at [chollinger.com/blog/](https://chollinger.com/blog/).
 
 Please see: 
 1. [A Data Engineering Perspective on Go vs. Python (Part 1)](https://chollinger.com/blog/2020/06/a-data-engineering-perspective-on-go-vs.-python-part-1/)
-2. [A Data Engineering Perspective on Go vs. Python (Part 2)](https://chollinger.com/blog/2020/07/a-data-engineering-perspective-on-go-vs.-python-part-2/)
+2. [A Data Engineering Perspective on Go vs. Python (Part 2)](https://chollinger.com/blog/2020/07/a-data-engineering-perspective-on-go-vs.-python-part-2-dataflow/)
 
 ## Use Case
 Shows differences betwen `Python` and `go` for `Apache Beam` by implementing a use case to parse `IMDb` movie data to find movies that match preferences.

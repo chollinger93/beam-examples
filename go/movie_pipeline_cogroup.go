@@ -133,35 +133,6 @@ type targetMovie struct {
 	NumVotes      int64   `bigquery:"NumVotes"`
 }
 
-// This is still inefficient
-func makeRatingsMap(rr int, ratings []ratingFn, emit func(map[string]ratingFn)) {
-	m := make(map[string]ratingFn)
-	for _, r := range ratings {
-		m[r.tconst] = r
-	}
-	emit(m)
-}
-
-// We have to emit `[]byte`, as we cannot serialize a `map`
-func combineMoviesRatings(movie movieFn, ratings map[string]ratingFn, emit func(targetMovie)) {
-	r, ok := ratings[movie.tconst]
-	if ok {
-		emit(targetMovie{
-			Id:             movie.tconst,
-			TitleType:      movie.titleType,
-			PrimaryTitle:   movie.primaryTitle,
-			OriginalTitle:  movie.originalTitle,
-			IsAdult:        movie.isAdult,
-			StartYear:      movie.startYear,
-			EndYear:        movie.endYear,
-			RuntimeMinutes: movie.runtimeMinutes,
-			Genres:         movie.genres,
-			AverageRating:  r.averageRating,
-			NumVotes:       r.numVotes,
-		})
-	}
-}
-
 func extractRatingId(r ratingFn) (string, ratingFn) {
 	return r.tconst, r
 }
@@ -247,6 +218,7 @@ func main() {
 
 	// Write
 	combinedString := beam.ParDo(s, func(v targetMovie) string {
+		fmt.Printf("%v\n", v)
 		j, _ := json.Marshal(v)
 		return fmt.Sprintf(string(j))
 	}, matched)
